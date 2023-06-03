@@ -1,8 +1,11 @@
+import 'dart:async';
 
-import 'flutter_touch_interaction_controller_platform_interface.dart';
+import 'messages.g.dart';
 
 class FlutterTouchInteractionController {
-  Future<String?> getPlatformVersion() {
-    return FlutterTouchInteractionControllerPlatform.instance.getPlatformVersion();
+  static final MessageApi _api = MessageApi();
+  static Future<String> get platformVersion async {
+    Version version = await _api.getPlatformVersion();
+    return version.string!;
   }
 }
