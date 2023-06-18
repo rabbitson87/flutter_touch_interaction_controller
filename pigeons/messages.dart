@@ -2,15 +2,32 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/messages.g.dart',
-  kotlinOut:
-      'android/src/main/kotlin/com/rabbitson87/flutter_touch_interaction_controller/Messages.g.kt',
-  copyrightHeader: 'pigeons/copyright.txt',
+  kotlinOut: 'android/src/main/kotlin/com/rabbitson87/flutter_touch_interaction_controller/Messages.g.kt',
 ))
-class Version {
-  String? string;
+
+class Point {
+  double x;
+  double y;
+
+  Point(this.x, this.y);
+}
+
+enum IntentName {
+  MOTIONACTION,
+  X,
+  Y,
+  TOOLTYPE,
+  EVENTTIME,
+}
+
+enum EventChannelName {
+  RABBITSON87,
+  MOTIONEVENT,
 }
 
 @HostApi()
 abstract class MessageApi {
-  Version getPlatformVersion();
+  bool isAccessibilityPermissionEnabled();
+  bool requestAccessibilityPermission();
+  bool touch(Point point);
 }

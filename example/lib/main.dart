@@ -16,32 +16,28 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  bool _isAccessibilityPermissionEnabled = false;
+  StreamSubscription<MotionEvent>? _subscription;
+  List<MotionEvent?> events = [];
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
+  Future<void> _isAccessibilityPermissionEnabledState() async {
+    bool isAccessibilityPermissionEnabled;
     try {
-      platformVersion = await FlutterTouchInteractionController.platformVersion;
+      isAccessibilityPermissionEnabled = await FlutterTouchInteractionController
+          .isAccessibilityPermissionEnabled;
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      isAccessibilityPermissionEnabled = false;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _isAccessibilityPermissionEnabled = isAccessibilityPermissionEnabled;
     });
   }
 
@@ -50,10 +46,61 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('FlutterTouchInteractionController example'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(children: [
+            ElevatedButton(
+              onPressed: () async {
+                await FlutterTouchInteractionController
+                    .requestAccessibilityPermission();
+              },
+              child: const Text('Request Accessibility Permission'),
+            ),
+            ElevatedButton(
+              onPressed: _isAccessibilityPermissionEnabledState,
+              child: const Text('Is Accessibility Permission Enabled'),
+            ),
+            Text(
+                'Is Accessibility Permission Enabled: $_isAccessibilityPermissionEnabled'),
+            ElevatedButton(
+              onPressed: () {
+                if (_subscription == null) {
+                  _subscription = FlutterTouchInteractionController.accessStream
+                      .listen((event) {
+                    print("$event");
+                    setState(() {
+                      events.add(event);
+                    });
+                  });
+                } else {
+                  _subscription?.cancel();
+                  _subscription = null;
+                  setState(() {
+                    events = [];
+                  });
+                }
+              },
+              child: Text(
+                  _subscription == null ? 'Start Listening' : 'Stop Listening'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await FlutterTouchInteractionController.touch(Point(x: 350, y: 400));
+              },
+              child: const Text('Click'),
+            ),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: events.length,
+                itemBuilder: (_, index) => ListTile(
+                  title: Text(events[index]!.toString()),
+                  // subtitle: Text(events[index]!.capturedText ?? ""),
+                ),
+              ),
+            ),
+          ]),
         ),
       ),
     );
