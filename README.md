@@ -14,7 +14,7 @@
 
 **Screenshot**: Sample screenshot of the project,
 
-![](https://github.com/rabbitson87/flutter_touch_interaction_controller/demo.gif)
+![](demo.gif)
 
 ## Installation
 
