@@ -1,3 +1,8 @@
+## 1.0.1 - 2023-06-19
+
+### Fixed
+- Corrected the README.md file.
+
 ## 1.0.0 - 2023-06-19
 
 ### Added

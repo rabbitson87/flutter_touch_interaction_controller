@@ -1,6 +1,6 @@
 name: flutter_touch_interaction_controller
 description: A Flutter plugin to detect and handle touch events on the screen for Android device.
-version: 1.0.0
+version: 1.0.1+1
 homepage: https://github.com/rabbitson87/flutter_touch_interaction_controller
 
 environment:

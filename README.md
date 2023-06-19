@@ -14,7 +14,7 @@
 
 **Screenshot**: Sample screenshot of the project,
 
-![](demo.gif)
+![](https://github.com/rabbitson87/flutter_touch_interaction_controller/blob/main/demo.gif)
 
 ## Installation
 
@@ -24,7 +24,7 @@ Add the following dependency to your pubspec.yaml file:
 
 ```dart
     dependencies:
-    flutter_touch_interaction_controller: ^1.0.0
+    flutter_touch_interaction_controller: ^1.0.1
 ```
 
 ### Change Android settings
