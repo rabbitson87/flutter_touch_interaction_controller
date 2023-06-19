@@ -1,31 +1,5 @@
-#### CFPB Open Source Project Template Instructions
-
-1. Create a new project.
-2. [Copy these files into the new project](#installation)
-3. Update the README, replacing the contents below as prescribed.
-4. Add any libraries, assets, or hard dependencies whose source code will be included
-   in the project's repository to the _Exceptions_ section in the [TERMS](TERMS.md).
-  - If no exceptions are needed, remove that section from TERMS.
-5. If working with an existing code base, answer the questions on the [open source checklist](opensource-checklist.md)
-6. Delete these instructions and everything up to the _Project Title_ from the README.
-7. Write some great software and tell people about it.
-
-> Keep the README fresh! It's the first thing people see and will make the initial impression.
-
-## Installation
-
-To install all of the template files, run the following script from the root of your project's directory:
-
-```
-bash -c "$(curl -s https://raw.githubusercontent.com/CFPB/development/main/open-source-template.sh)"
-```
-
-----
-
 # Flutter Touch Interaction Controller
-    
-[![Build Status](https://travis-ci.com/cfpb/flutter_touch_interaction_controller.svg?branch=main)](https://travis-ci.com/cfpb/flutter_touch_interaction_controller)
-[![codecov](https://codecov.io/gh/cfpb/flutter_touch_interaction_controller/branch/main/graph/badge.svg)](https://codecov.io/gh/cfpb/flutter_touch_interaction_controller)
+
 [![pub package](https://img.shields.io/pub/v/flutter_touch_interaction_controller.svg)](https://pub.dev/packages/flutter_touch_interaction_controller)
 
   - **Description**:  A Flutter plugin to detect and handle touch events on the screen for Android device.
@@ -40,20 +14,48 @@ bash -c "$(curl -s https://raw.githubusercontent.com/CFPB/development/main/open-
 
 **Screenshot**: Sample screenshot of the project,
 
-![](https://raw.githubusercontent.com/cfpb/open-source-project-template/main/screenshot.png)
-
-
-## Dependencies
-
-Describe any dependencies that must be installed for this software to work.
-This includes programming languages, databases or other storage mechanisms, build tools, frameworks, and so forth.
-If specific versions of other software are required, or known not to work, call that out.
+![](https://github.com/rabbitson87/flutter_touch_interaction_controller/demo.gif)
 
 ## Installation
 
-Detailed instructions on how to install, configure, and get the project running.
-This should be frequently tested to ensure reliability. Alternatively, link to
-a separate [INSTALL](INSTALL.md) document.
+### Add dependencies
+
+Add the following dependency to your pubspec.yaml file:
+
+```dart
+    dependencies:
+    flutter_touch_interaction_controller: ^1.0.0
+```
+
+### Change Android settings
+
+1. Add the following code after the activity section in the android/app/src/main/AndroidManifest.xml file:
+
+```xml
+<service
+    android:name="com.rabbitson87.flutter_touch_interaction_controller.AccessibilityServicePlugin"
+    android:exported="true"
+    android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+    <intent-filter>
+        <action android:name="android.accessibilityservice.AccessibilityService" />
+    </intent-filter>
+    <meta-data
+        android:name="android.accessibilityservice"
+        android:resource="@xml/accessibility_service_config" />
+</service>
+```
+
+2. Create android/app/src/main/res/xml/accessibility_service_config.xml file and add the following code:
+
+```xml
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackSpoken"
+    android:accessibilityFlags="flagDefault"
+    android:canPerformGestures="true"
+    android:canRequestTouchExplorationMode="true"
+    android:notificationTimeout="100" />
+```
 
 ## Usage
 
@@ -89,40 +91,19 @@ Execute a touch event:
 await FlutterTouchInteractionController.touch(Point(x: 350, y: 400));
 ```
 
-## How to test the software
-
-```dart
-flutter test
-```
-
-## Known issues
-
-Document any known significant shortcomings with the software.
-
 ## Getting help
-
-Instruct users how to get help with this software; this might include links to an issue tracker, wiki, mailing list, etc.
-
-**Example**
 
 If you have questions, concerns, bug reports, etc, please file an issue in this repository's Issue Tracker.
 
 ## Getting involved
 
-This section should detail why people should get involved and describe key areas you are
-currently focusing on; e.g., trying to get feedback on features, fixing certain bugs, building
-important pieces, etc.
-
 General instructions on _how_ to contribute should be stated with a link to [CONTRIBUTING](CONTRIBUTING.md).
-
 
 ----
 
 ## Open source licensing info
 1. [TERMS](TERMS.md)
 2. [LICENSE](LICENSE)
-3. [CFPB Source Code Policy](https://github.com/cfpb/source-code-policy/)
-
 
 ----
 

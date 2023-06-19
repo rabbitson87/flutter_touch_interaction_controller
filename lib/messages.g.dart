@@ -62,7 +62,7 @@ class _MessageApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return Point.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -74,8 +74,7 @@ class MessageApi {
   /// Constructor for [MessageApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MessageApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
+  MessageApi({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
   static const MessageCodec<Object?> codec = _MessageApiCodec();
@@ -84,8 +83,7 @@ class MessageApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.MessageApi.isAccessibilityPermissionEnabled', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -111,8 +109,7 @@ class MessageApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.MessageApi.requestAccessibilityPermission', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -135,11 +132,9 @@ class MessageApi {
   }
 
   Future<bool> touch(Point arg_point) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.MessageApi.touch', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_point]) as List<Object?>?;
+    final BasicMessageChannel<Object?> channel =
+        BasicMessageChannel<Object?>('dev.flutter.pigeon.MessageApi.touch', codec, binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(<Object?>[arg_point]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

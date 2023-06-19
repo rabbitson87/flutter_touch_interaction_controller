@@ -28,8 +28,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _isAccessibilityPermissionEnabledState() async {
     bool isAccessibilityPermissionEnabled;
     try {
-      isAccessibilityPermissionEnabled = await FlutterTouchInteractionController
-          .isAccessibilityPermissionEnabled;
+      isAccessibilityPermissionEnabled = await FlutterTouchInteractionController.isAccessibilityPermissionEnabled;
     } on PlatformException {
       isAccessibilityPermissionEnabled = false;
     }
@@ -52,8 +51,7 @@ class _MyAppState extends State<MyApp> {
           child: Column(children: [
             ElevatedButton(
               onPressed: () async {
-                await FlutterTouchInteractionController
-                    .requestAccessibilityPermission();
+                await FlutterTouchInteractionController.requestAccessibilityPermission();
               },
               child: const Text('Request Accessibility Permission'),
             ),
@@ -61,13 +59,11 @@ class _MyAppState extends State<MyApp> {
               onPressed: _isAccessibilityPermissionEnabledState,
               child: const Text('Is Accessibility Permission Enabled'),
             ),
-            Text(
-                'Is Accessibility Permission Enabled: $_isAccessibilityPermissionEnabled'),
+            Text('Is Accessibility Permission Enabled: $_isAccessibilityPermissionEnabled'),
             ElevatedButton(
               onPressed: () {
                 if (_subscription == null) {
-                  _subscription = FlutterTouchInteractionController.accessStream
-                      .listen((event) {
+                  _subscription = FlutterTouchInteractionController.accessStream.listen((event) {
                     print("$event");
                     setState(() {
                       events.add(event);
@@ -81,8 +77,7 @@ class _MyAppState extends State<MyApp> {
                   });
                 }
               },
-              child: Text(
-                  _subscription == null ? 'Start Listening' : 'Stop Listening'),
+              child: Text(_subscription == null ? 'Start Listening' : 'Stop Listening'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -96,7 +91,6 @@ class _MyAppState extends State<MyApp> {
                 itemCount: events.length,
                 itemBuilder: (_, index) => ListTile(
                   title: Text(events[index]!.toString()),
-                  // subtitle: Text(events[index]!.capturedText ?? ""),
                 ),
               ),
             ),
