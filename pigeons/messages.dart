@@ -21,8 +21,10 @@ enum IntentName {
 }
 
 enum EventChannelName {
-  RABBITSON87,
-  MOTIONEVENT,
+  MOTION,
+  REQUESTACCESSIBILITY,
+  TOUCH,
+  SWIPE,
 }
 
 @HostApi()
@@ -30,4 +32,5 @@ abstract class MessageApi {
   bool isAccessibilityPermissionEnabled();
   bool requestAccessibilityPermission();
   bool touch(Point point);
+  bool swipe(Point startPoint, Point endPoint);
 }

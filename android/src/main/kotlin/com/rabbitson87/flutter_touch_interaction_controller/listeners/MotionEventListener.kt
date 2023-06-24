@@ -1,4 +1,4 @@
-package com.rabbitson87.flutter_touch_interaction_controller
+package com.rabbitson87.flutter_touch_interaction_controller.listeners
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,7 +10,7 @@ class MotionEventListener(_eventSink: EventChannel.EventSink) : BroadcastReceive
     private var eventSink = _eventSink
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent != null && intent.action == AccessibilityServicePlugin.MOTION_EVENT_INTENT) {
+        if (intent != null && intent.action == EventChannelName.MOTION.name) {
             /// Send data back via the Event Sink
             val data: HashMap<String, Any?> = HashMap()
 

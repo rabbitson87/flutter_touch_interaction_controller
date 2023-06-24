@@ -28,7 +28,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _isAccessibilityPermissionEnabledState() async {
     bool isAccessibilityPermissionEnabled;
     try {
-      isAccessibilityPermissionEnabled = await FlutterTouchInteractionController.isAccessibilityPermissionEnabled;
+      isAccessibilityPermissionEnabled = await FlutterTouchInteractionController
+          .isAccessibilityPermissionEnabled;
     } on PlatformException {
       isAccessibilityPermissionEnabled = false;
     }
@@ -51,7 +52,9 @@ class _MyAppState extends State<MyApp> {
           child: Column(children: [
             ElevatedButton(
               onPressed: () async {
-                await FlutterTouchInteractionController.requestAccessibilityPermission();
+                final result = await FlutterTouchInteractionController
+                    .requestAccessibilityPermission();
+                print("requestAccessibilityPermission: $result");
               },
               child: const Text('Request Accessibility Permission'),
             ),
@@ -59,14 +62,19 @@ class _MyAppState extends State<MyApp> {
               onPressed: _isAccessibilityPermissionEnabledState,
               child: const Text('Is Accessibility Permission Enabled'),
             ),
-            Text('Is Accessibility Permission Enabled: $_isAccessibilityPermissionEnabled'),
+            Text(
+                'Is Accessibility Permission Enabled: $_isAccessibilityPermissionEnabled'),
             ElevatedButton(
               onPressed: () {
                 if (_subscription == null) {
-                  _subscription = FlutterTouchInteractionController.accessStream.listen((event) {
-                    print("$event");
-                    setState(() {
-                      events.add(event);
+                  setState(() {
+                    _subscription = FlutterTouchInteractionController
+                        .accessStream
+                        .listen((event) {
+                      print("$event");
+                      setState(() {
+                        events.add(event);
+                      });
                     });
                   });
                 } else {
@@ -77,13 +85,24 @@ class _MyAppState extends State<MyApp> {
                   });
                 }
               },
-              child: Text(_subscription == null ? 'Start Listening' : 'Stop Listening'),
+              child: Text(
+                  _subscription == null ? 'Start Listening' : 'Stop Listening'),
             ),
             ElevatedButton(
               onPressed: () async {
-                await FlutterTouchInteractionController.touch(Point(x: 350, y: 400));
+                final touchResult = await FlutterTouchInteractionController.touch(
+                    Point(x: 350, y: 400));
+                print("touchResult: $touchResult");
               },
               child: const Text('Click'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final touchResult = await FlutterTouchInteractionController.swipe(
+                    Point(x: 350, y: 1400), Point(x: 350, y: 1000));
+                print("SwipeResult: $touchResult");
+              },
+              child: const Text('Swipe'),
             ),
             Expanded(
               child: ListView.builder(

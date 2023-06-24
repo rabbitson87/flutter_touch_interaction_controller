@@ -11,6 +11,7 @@
   2. Requesting accessibilityService permission.
   3. Verifying accessibilityService permission.
   4. One-touch execution.
+  5. Touch swife execution.
 
 **Screenshot**: Sample screenshot of the project,
 
@@ -24,7 +25,7 @@ Add the following dependency to your pubspec.yaml file:
 
 ```dart
     dependencies:
-    flutter_touch_interaction_controller: ^1.0.1
+    flutter_touch_interaction_controller: ^1.1.0
 ```
 
 ### Change Android settings
@@ -89,6 +90,12 @@ Execute a touch event:
 
 ```dart
 await FlutterTouchInteractionController.touch(Point(x: 350, y: 400));
+```
+
+Execute a swipe event:
+
+```dart
+await FlutterTouchInteractionController.swipe(Point(x: 350, y: 1400), Point(x: 350, y: 1000));
 ```
 
 ## Getting help

@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.text.TextUtils.SimpleStringSplitter
+import com.rabbitson87.flutter_touch_interaction_controller.AccessibilityServicePlugin.Companion.TOUCH_EXPLORATION
+import com.rabbitson87.flutter_touch_interaction_controller.FlutterTouchInteractionControllerPlugin.Companion.ACTION_ACCESSIBILITY_SETTINGS
 
 
 fun isAccessibilityPermissionEnabled(context: Context): Boolean {
@@ -34,11 +36,11 @@ fun isAccessibilityPermissionEnabled(context: Context): Boolean {
 
 fun requestTouchExploration(context: Context, status: Boolean) {
     val intent = Intent(context, AccessibilityServicePlugin::class.java)
-    intent.putExtra(AccessibilityServicePlugin.TOUCH_EXPLORATION, status)
+    intent.putExtra(TOUCH_EXPLORATION, status)
     context.startService(intent)
 }
 
-class MethodsChannel(context: Context, activity: Activity): MessageApi {
+class MethodsChannel(context: Context, activity: Activity) : MessageApi {
     private var _context: Context = context
     private var _activity: Activity = activity
 
@@ -48,19 +50,35 @@ class MethodsChannel(context: Context, activity: Activity): MessageApi {
 
     override fun requestAccessibilityPermission(): Boolean {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-        _activity.startActivityForResult(intent, FlutterTouchInteractionControllerPlugin.ACTION_ACCESSIBILITY_SETTINGS)
-        return true
+        return _activity.startActivityForResult(
+            intent,
+            ACTION_ACCESSIBILITY_SETTINGS
+        ).runCatching {
+            true
+        }.getOrElse {
+            false
+        }
     }
 
     override fun touch(point: Point): Boolean {
         val position = FloatArray(2)
-        position[0]= point.x.toFloat()
+        position[0] = point.x.toFloat()
         position[1] = point.y.toFloat()
 
         val intent = Intent(_context, AccessibilityServicePlugin::class.java)
-        intent.putExtra(AccessibilityServicePlugin.POSITION, position)
-        _context.startService(intent)
-        return true
+        intent.putExtra(EventChannelName.TOUCH.name, position)
+        return _context.startService(intent).runCatching { true }.getOrElse { false }
     }
 
+    override fun swipe(startPoint: Point, endPoint: Point): Boolean {
+        val position = FloatArray(4)
+        position[0] = startPoint.x.toFloat()
+        position[1] = startPoint.y.toFloat()
+        position[2] = endPoint.x.toFloat()
+        position[3] = endPoint.y.toFloat()
+
+        val intent = Intent(_context, AccessibilityServicePlugin::class.java)
+        intent.putExtra(EventChannelName.SWIPE.name, position)
+        return _context.startService(intent).runCatching { true }.getOrElse { false }
+    }
 }

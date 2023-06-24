@@ -1,5 +1,6 @@
 package com.rabbitson87.flutter_touch_interaction_controller
 
+import EventChannelName
 import IntentName
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
@@ -20,9 +21,7 @@ import java.io.Serializable
 class AccessibilityServicePlugin : AccessibilityService(), Serializable,
     TouchInteractionController.Callback {
     companion object {
-        const val POSITION = "position"
         const val TOUCH_EXPLORATION = "touchExploration"
-        const val MOTION_EVENT_INTENT = "motionEvent"
     }
 
     private var _flags = 0
@@ -38,9 +37,14 @@ class AccessibilityServicePlugin : AccessibilityService(), Serializable,
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        if (intent?.extras?.containsKey(POSITION) == true) {
-            val position = intent.getFloatArrayExtra(POSITION)!!
+        if (intent?.extras?.containsKey(EventChannelName.TOUCH.name) == true) {
+            val position = intent.getFloatArrayExtra(EventChannelName.TOUCH.name)!!
             touch(position[0], position[1])
+        }
+
+        if (intent?.extras?.containsKey(EventChannelName.SWIPE.name) == true) {
+            val position = intent.getFloatArrayExtra(EventChannelName.SWIPE.name)!!
+            swipe(position[0], position[1], position[2], position[3])
         }
 
         if (intent?.extras?.containsKey(TOUCH_EXPLORATION) == true) {
@@ -87,7 +91,7 @@ class AccessibilityServicePlugin : AccessibilityService(), Serializable,
 
     // TouchInteractionController.Callback start
     override fun onMotionEvent(motionEvent: MotionEvent) {
-        val touchIntent = Intent(MOTION_EVENT_INTENT)
+        val touchIntent = Intent(EventChannelName.MOTION.name)
 
         val actionType: Int = motionEvent.action
         touchIntent.putExtra(IntentName.MOTIONACTION.name, actionType)
@@ -110,21 +114,40 @@ class AccessibilityServicePlugin : AccessibilityService(), Serializable,
     override fun onStateChanged(state: Int) {}
     // TouchInteractionController.Callback end
 
-    private fun touch(x: Float, y: Float) {
+    private fun gestureDescriptionAction(path: Path, eventChannelName:EventChannelName, duration: Long) {
         val gestureBuilder = GestureDescription.Builder()
-        val path = Path()
-        path.moveTo(x, y)
-        gestureBuilder.addStroke(StrokeDescription(path, 0, 100, false))
+        gestureBuilder.addStroke(StrokeDescription(path, 0, duration, false))
         dispatchGesture(
             gestureBuilder.build(), object : GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription) {
+                    val touchIntent = Intent(eventChannelName.name)
+                    touchIntent.putExtra(eventChannelName.name, false)
+
+                    sendBroadcast(touchIntent)
                     super.onCancelled(gestureDescription)
                 }
 
                 override fun onCompleted(gestureDescription: GestureDescription) {
+                    val touchIntent = Intent(eventChannelName.name)
+                    touchIntent.putExtra(eventChannelName.name, true)
+
+                    sendBroadcast(touchIntent)
                     super.onCompleted(gestureDescription)
                 }
             }, null
         )
+    }
+
+    private fun touch(x: Float, y: Float) {
+        val path = Path()
+        path.moveTo(x, y)
+        gestureDescriptionAction(path, EventChannelName.TOUCH, 1)
+    }
+
+    private fun swipe(x1: Float, y1: Float, x2: Float, y2: Float) {
+        val path = Path()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y2)
+        gestureDescriptionAction(path, EventChannelName.SWIPE, 100)
     }
 }
